@@ -26,7 +26,7 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         get
         {
-            _instance = FindObjectOfType<T>();
+            _instance = FindFirstObjectByType<T>();
             return _instance;
         }
     }
