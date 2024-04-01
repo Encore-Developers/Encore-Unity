@@ -18,14 +18,24 @@ public class Smasher : MonoBehaviour
     public void Smash()
     {
         List<MusicNote> MyLane = GameManager.Instance.NotesByLane[Lane];
-        MusicNote NextNote = MyLane[0];
-
-        if (!NextNote)
+        if (MyLane.Count < 1)
+        {
+            GameManager.Instance.CurrentGameStats.Strikes++;
+            GameManager.Instance.CurrentGameStats.CurrentCombo = 0;
+            GameManager.Instance.ComboText.text = "0";
             return;
+        }
+
+        MusicNote NextNote = MyLane[0];
 
         float Off = Mathf.Abs(NextNote.Timing - NotesManager.Instance.CurrentTime);
         if (Off > 1f)
+        {
+            GameManager.Instance.CurrentGameStats.Strikes++;
+            GameManager.Instance.CurrentGameStats.CurrentCombo = 0;
+            GameManager.Instance.ComboText.text = "0";
             return;
+        }
 
         print($"Hit - Mathf.Abs(Off) = {Off}");
 

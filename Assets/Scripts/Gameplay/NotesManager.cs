@@ -139,6 +139,10 @@ public class NotesManager : MonoSingleton<NotesManager>
             MusicNote N = GameManager.Instance.SortedNotes[i];
             if (N.transform.position.z < 0)
             {
+                GameManager.Instance.CurrentGameStats.Misses++;
+                GameManager.Instance.CurrentGameStats.CurrentCombo = 0;
+                GameManager.Instance.ComboText.text = "0";
+
                 GameManager.Instance.SortedNotes.RemoveAt(i);
                 GameManager.Instance.NotesByLane[N.Lane].Remove(N);
                 Destroy(N.gameObject);

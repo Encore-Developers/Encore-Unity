@@ -2,6 +2,7 @@ using Melanchall.DryWetMidi.Core;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -17,6 +18,8 @@ public enum SongDifficulty
 public class GameStatsTemplate
 {
     public int PerfectHits = 0;
+    public int LargestCombo = 0;
+    public int CurrentCombo = 0;
     public int GoodHits = 0;
     public int Strikes = 0;
     public int Misses = 0;
@@ -29,6 +32,11 @@ public class GameStatsTemplate
 
 public class GameManager : MonoSingleton<GameManager>
 {
+    public static int BaseScore = 30;
+    public static float PerfectMultiplier = 1.2f;
+
+    public TextMeshProUGUI ScoreText, ComboText;
+
     public SongConfigTemplate CurrentSongConfig;
     public GameStatsTemplate CurrentGameStats;
     public List<Smasher> ExpertSmashers;
@@ -58,6 +66,11 @@ public class GameManager : MonoSingleton<GameManager>
         Key[] ExpertKeys = new[] { Key.D, Key.F, Key.J, Key.K, Key.L };
         InputSystem.onEvent += (eventPtr, device) =>
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+#endif
+
             if (!eventPtr.IsA<StateEvent>())
                 return;
 
@@ -111,12 +124,32 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void GoodHit()
     {
-        print("Good hit");
+        CurrentGameStats.GoodHits++;
+        CurrentGameStats.Score += BaseScore;
+
+        CurrentGameStats.CurrentCombo++;
+
+        if (CurrentGameStats.CurrentCombo > CurrentGameStats.LargestCombo)
+            CurrentGameStats.LargestCombo = CurrentGameStats.CurrentCombo;
+
+        ScoreText.text = CurrentGameStats.Score.ToString("#,#");
+        ComboText.text = CurrentGameStats.CurrentCombo.ToString();
+        //print("Good hit");
     }
 
     public void PerfectHit()
     {
-        print("Perfect hit");
+        CurrentGameStats.PerfectHits++;
+        CurrentGameStats.Score += Mathf.FloorToInt(BaseScore * PerfectMultiplier);
+
+        CurrentGameStats.CurrentCombo++;
+
+        if (CurrentGameStats.CurrentCombo > CurrentGameStats.LargestCombo)
+            CurrentGameStats.LargestCombo = CurrentGameStats.CurrentCombo;
+
+        ScoreText.text = CurrentGameStats.Score.ToString("#,#");
+        ComboText.text = CurrentGameStats.CurrentCombo.ToString();
+        //print("Perfect hit");
     }
 
     public void StartPlay()
