@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 127240065}
   - component: {fileID: 127240064}
+  - component: {fileID: 127240066}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -154,7 +155,10 @@ MonoBehaviour:
   - {fileID: 268967602}
   - {fileID: 1465577167}
   - {fileID: 1210219315}
+  SortedNotes: []
   dbgTestChartResourceFilename: Songs/Chords/info.json
+  dbgTestSongDifficultyToLoad: 3
+  dbgTestInstrumentToPlay: 0
 --- !u!4 &127240065
 Transform:
   m_ObjectHideFlags: 0
@@ -170,6 +174,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &127240066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127240063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 399bd25395978f84c8942edde88a07ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &141899633
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -225,6 +241,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f1b9ed40b2d9bec40a3e155000d9ddbe, type: 3}
       propertyPath: m_Name
       value: lift
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f1b9ed40b2d9bec40a3e155000d9ddbe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -321,9 +341,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd98a8c62584f3428dac807e99f1338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TappedThisFrame: 0
-  ReleasedThisFrame: 0
-  IsHeld: 0
+  HeldLastFrame: 0
+  Lane: 2
 --- !u!1001 &457824646
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -484,9 +503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd98a8c62584f3428dac807e99f1338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TappedThisFrame: 0
-  ReleasedThisFrame: 0
-  IsHeld: 0
+  HeldLastFrame: 0
+  Lane: 1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,6 +1018,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5396a2ce8de2f19448c878c59d5c2df0, type: 3}
   m_PrefabInstance: {fileID: 1171005924}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1182836600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1182836601}
+  m_Layer: 0
+  m_Name: Notes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1182836601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182836600}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2.35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2132544597}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1210219313
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1085,9 +1134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd98a8c62584f3428dac807e99f1338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TappedThisFrame: 0
-  ReleasedThisFrame: 0
-  IsHeld: 0
+  HeldLastFrame: 0
+  Lane: 4
 --- !u!1001 &1232496568
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1154,67 +1202,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7c75b3f9c202bef4ebad4f33ad8b2220, type: 3}
   m_PrefabInstance: {fileID: 1232496568}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1402409444
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -7635826562936255635, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 19ed6040a7f8c7f48ad6760650775191, type: 2}
-    - target: {fileID: 919132149155446097, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
-      propertyPath: m_Name
-      value: note
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 34ae672b4a9b7914691538571666a52c, type: 3}
 --- !u!1 &1465577166 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5396a2ce8de2f19448c878c59d5c2df0, type: 3}
@@ -1232,9 +1219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd98a8c62584f3428dac807e99f1338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TappedThisFrame: 0
-  ReleasedThisFrame: 0
-  IsHeld: 0
+  HeldLastFrame: 0
+  Lane: 3
 --- !u!1 &1686963190
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,9 +1316,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd98a8c62584f3428dac807e99f1338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TappedThisFrame: 0
-  ReleasedThisFrame: 0
-  IsHeld: 0
+  HeldLastFrame: 0
+  Lane: 0
 --- !u!1 &1939442519
 GameObject:
   m_ObjectHideFlags: 0
@@ -1402,6 +1387,7 @@ Transform:
   - {fileID: 457824647}
   - {fileID: 1232496569}
   - {fileID: 1939442520}
+  - {fileID: 1182836601}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2132544598
@@ -1416,9 +1402,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d608afa8a7b43cb4e8e4ff5b8384cece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NotesParent: {fileID: 1182836601}
+  MusicSyncDeltaTime: 0
   SmasherHit: {fileID: 2100000, guid: e4a618bce2dc1794b8cf80f46797ca6b, type: 2}
   SmasherDefault: {fileID: 2100000, guid: 1451ceaa69145bc4c827913629c452d9, type: 2}
-  ScrollSpeed: 1.5
+  ScrollSpeed: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1429,5 +1417,4 @@ SceneRoots:
   - {fileID: 1080745350}
   - {fileID: 1686963193}
   - {fileID: 2132544597}
-  - {fileID: 1402409444}
   - {fileID: 141899633}
