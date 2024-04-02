@@ -85,7 +85,7 @@ public class NotesManager : MonoSingleton<NotesManager>
     {
         TempoMap Tempos = Config.Chart.GetTempoMap();
         Dictionary<string, TrackChunk> PlayableTracks = Config.Chart.GetTrackChunks()
-            .ToDictionary(K => (K.Events.First(y => y.EventType == MidiEventType.SequenceTrackName) as SequenceTrackNameEvent).Text.Replace("PART ", "").Replace("PLASTIC ", "PLASTIC"), V => V);
+            .ToDictionary(K => (K.Events.First(y => y.EventType == MidiEventType.SequenceTrackName) as SequenceTrackNameEvent).Text.Replace("PART ", "").Replace(" ", ""), V => V);
 
         TrackChunk InstChunk = PlayableTracks.First(x => x.Key == Instrument.ToString()).Value;
         List<KeyValuePair<int, int>> DiffBounds = _difficultyNoteBounds[Difficulty];
@@ -117,24 +117,19 @@ public class NotesManager : MonoSingleton<NotesManager>
             new List<MusicNote>()  // Rightmost Lane
         };
         
-        int LiftIdx=0;
+        int LiftIdx = 0;
         foreach (Note Note in TrackNotes)
         {
-            bool IsLift=false;
+            bool IsLift = false;
             if(LiftIdx<TrackLifts.Count){
-                if((float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds==(float)TrackLifts[LiftIdx].TimeAs<MetricTimeSpan>(Tempos).TotalSeconds){
+                if((float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds == (float)TrackLifts[LiftIdx].TimeAs<MetricTimeSpan>(Tempos).TotalSeconds){
                     IsLift=true;
                     LiftIdx++;
                 }
             }
             
-            MusicNote MN;
-            if(IsLift){
-                MN = Instantiate(LiftBase, NotesParent).GetComponent<MusicNote>();
-            }else{
-                MN = Instantiate(NoteBase, NotesParent).GetComponent<MusicNote>();
-            }
-           
+            MusicNote MN = Instantiate(IsLift ? LiftBase : NoteBase, NotesParent).GetComponent<MusicNote>();
+            MN.IsLift = IsLift;
             MN.FullNote = Note;
             
             MN.Setup(Note.NoteNumber - DiffBounds[0].Key, (float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds);
