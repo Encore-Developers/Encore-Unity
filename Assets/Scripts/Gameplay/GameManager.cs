@@ -83,9 +83,9 @@ public class GameManager : MonoSingleton<GameManager>
                 Smasher CorrespondingSmasher = ExpertSmashers[i];
     
                 if (K > 0 && !CorrespondingSmasher.HeldLastFrame)
-                    CorrespondingSmasher.Smash();
+                    CorrespondingSmasher.Smash(false);
                 if (K<=0 && CorrespondingSmasher.HeldLastFrame)
-                    CorrespondingSmasher.Lift();
+                    CorrespondingSmasher.Smash(true);
                 CorrespondingSmasher.HeldLastFrame = K > 0;
                 CorrespondingSmasher.UpdateSmasherMaterial(K);
 
