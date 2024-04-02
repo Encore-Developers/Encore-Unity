@@ -59,7 +59,45 @@ public class Smasher : MonoBehaviour
             return;
         }
     }
+    public void Lift()
+    {
+        List<MusicNote> MyLane = GameManager.Instance.NotesByLane[Lane];
+        if (MyLane.Count < 1)
+        {
+            GameManager.Instance.CurrentGameStats.Strikes++;
+            GameManager.Instance.CurrentGameStats.CurrentCombo = 0;
+            GameManager.Instance.ComboText.text = "0";
+            return;
+        }
 
+        MusicNote NextNote = MyLane[0];
+
+        float Off = Mathf.Abs(NextNote.Timing - NotesManager.Instance.CurrentTime);
+
+        print($"Hit Lift - Mathf.Abs(Off) = {Off}");
+        if(NextNote.IsLift){
+            if (Off <= 0.025f) // between -0.025 and 0.025
+            {
+                GameManager.Instance.PerfectHit();
+
+                MyLane.Remove(NextNote);
+                GameManager.Instance.SortedNotes.Remove(NextNote);
+                Destroy(NextNote.gameObject);
+                return;
+            }
+
+            if (Off > 0.025f && Off <= 0.125f) // between -0.125 and 0.125, skipping 0.025
+            {
+                GameManager.Instance.GoodHit();
+
+                MyLane.Remove(NextNote);
+                GameManager.Instance.SortedNotes.Remove(NextNote);
+                Destroy(NextNote.gameObject);
+                return;
+            }
+        }
+        
+    }
     public void UpdateSmasherMaterial(float Tapped)
     {
         if (Tapped > 0)

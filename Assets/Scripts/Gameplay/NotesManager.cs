@@ -23,7 +23,10 @@ public enum InstrumentType
     VOCALS,
     GUITAR,
     BASS,
-    DRUMS
+    DRUMS,
+    PLASTICGUITAR,
+    PLASTICBASS,
+    PLASTICDRUMS
 }
 
 public class NotesManager : MonoSingleton<NotesManager>
@@ -42,13 +45,13 @@ public class NotesManager : MonoSingleton<NotesManager>
     }
 
     AudioSource _backingSource = null;
-    Dictionary<SongDifficulty, KeyValuePair<int, int>> _difficultyNoteBounds = new Dictionary<SongDifficulty, KeyValuePair<int, int>>()
+    Dictionary<SongDifficulty, List<KeyValuePair<int, int>>> _difficultyNoteBounds = new Dictionary<SongDifficulty, List<KeyValuePair<int, int>>>()
     {
         // Difficulty, { LowerBound, HigherBound }
-        { SongDifficulty.Expert, new KeyValuePair<int, int>(96, 100) },
-        { SongDifficulty.Hard,   new KeyValuePair<int, int>(84, 87) },
-        { SongDifficulty.Medium, new KeyValuePair<int, int>(72, 75) },
-        { SongDifficulty.Easy,   new KeyValuePair<int, int>(60, 63) }
+        { SongDifficulty.Expert, new List<KeyValuePair<int, int>>{new KeyValuePair<int,int>(96, 100), new KeyValuePair<int,int>(102,106) }},
+        { SongDifficulty.Hard,   new List<KeyValuePair<int, int>>{new KeyValuePair<int,int>(84, 87), new KeyValuePair<int,int>(90, 93)} },
+        { SongDifficulty.Medium, new List<KeyValuePair<int, int>>{new KeyValuePair<int,int>(72, 75), new KeyValuePair<int,int>(78,81)} },
+        { SongDifficulty.Easy,   new List<KeyValuePair<int, int>>{new KeyValuePair<int,int>(60, 63), new KeyValuePair<int,int>(66,69)} }
     };
 
     public void LoadStems(SongConfigTemplate Config)
@@ -82,18 +85,22 @@ public class NotesManager : MonoSingleton<NotesManager>
     {
         TempoMap Tempos = Config.Chart.GetTempoMap();
         Dictionary<string, TrackChunk> PlayableTracks = Config.Chart.GetTrackChunks()
-            .ToDictionary(K => (K.Events.First(y => y.EventType == MidiEventType.SequenceTrackName) as SequenceTrackNameEvent).Text.Replace("PART ", "").Replace("PLASTIC ", ""), V => V);
+            .ToDictionary(K => (K.Events.First(y => y.EventType == MidiEventType.SequenceTrackName) as SequenceTrackNameEvent).Text.Replace("PART ", "").Replace("PLASTIC ", "PLASTIC"), V => V);
 
         TrackChunk InstChunk = PlayableTracks.First(x => x.Key == Instrument.ToString()).Value;
-        KeyValuePair<int, int> DiffBounds = _difficultyNoteBounds[Difficulty];
+        List<KeyValuePair<int, int>> DiffBounds = _difficultyNoteBounds[Difficulty];
         //print(string.Join(", ", PlayableTracks.Keys));
 
         List<Note> TrackNotes = InstChunk
             .GetNotes()
-            .Where(x => x.NoteNumber >= DiffBounds.Key && x.NoteNumber <= DiffBounds.Value)
+            .Where(x => x.NoteNumber >= DiffBounds[0].Key && x.NoteNumber <= DiffBounds[0].Value)
             .ToList();
-
+        List<Note> TrackLifts = InstChunk
+            .GetNotes()
+            .Where(x => x.NoteNumber >= DiffBounds[1].Key && x.NoteNumber <= DiffBounds[1].Value)
+            .ToList();
         GameObject NoteBase = Resources.Load<GameObject>("Prefabs/Note");
+        GameObject LiftBase = Resources.Load<GameObject>("Prefabs/Lift");
         //for (int i = 0; i < 5; i++)
         //{
             //MusicNote MN = Instantiate(NoteBase, NotesParent).GetComponent<MusicNote>();
@@ -109,12 +116,29 @@ public class NotesManager : MonoSingleton<NotesManager>
             new List<MusicNote>(),
             new List<MusicNote>()  // Rightmost Lane
         };
-
+        
+        int LiftIdx=0;
         foreach (Note Note in TrackNotes)
         {
-            MusicNote MN = Instantiate(NoteBase, NotesParent).GetComponent<MusicNote>();
+            bool IsLift=false;
+            if(LiftIdx<TrackLifts.Count){
+                if((float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds==(float)TrackLifts[LiftIdx].TimeAs<MetricTimeSpan>(Tempos).TotalSeconds){
+                    IsLift=true;
+                    LiftIdx++;
+                }
+            }
+            
+            MusicNote MN;
+            if(IsLift){
+                MN = Instantiate(LiftBase, NotesParent).GetComponent<MusicNote>();
+                MN.IsLift=true;
+            }else{
+                MN = Instantiate(NoteBase, NotesParent).GetComponent<MusicNote>();
+            }
+           
             MN.FullNote = Note;
-            MN.Setup(Note.NoteNumber - DiffBounds.Key, (float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds);
+            
+            MN.Setup(Note.NoteNumber - DiffBounds[0].Key, (float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds);
 
             Lanes[MN.Lane].Add(MN);
             SortedNotes.Add(MN);
