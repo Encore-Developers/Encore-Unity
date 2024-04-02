@@ -132,3 +132,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Timing: 0
   Lane: 0
+  IsLift: 0
