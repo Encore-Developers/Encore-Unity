@@ -131,7 +131,6 @@ public class NotesManager : MonoSingleton<NotesManager>
             MusicNote MN;
             if(IsLift){
                 MN = Instantiate(LiftBase, NotesParent).GetComponent<MusicNote>();
-                MN.IsLift=true;
             }else{
                 MN = Instantiate(NoteBase, NotesParent).GetComponent<MusicNote>();
             }
