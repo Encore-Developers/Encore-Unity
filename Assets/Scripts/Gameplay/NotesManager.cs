@@ -118,6 +118,7 @@ public class NotesManager : MonoSingleton<NotesManager>
         };
         
         int LiftIdx = 0;
+        int NoteIdx = 0;
         foreach (Note Note in TrackNotes)
         {
             bool IsLift = false;
@@ -131,8 +132,8 @@ public class NotesManager : MonoSingleton<NotesManager>
             MusicNote MN = Instantiate(IsLift ? LiftBase : NoteBase, NotesParent).GetComponent<MusicNote>();
             MN.IsLift = IsLift;
             MN.FullNote = Note;
-            
-            MN.Setup(Note.NoteNumber - DiffBounds[0].Key, (float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds);
+            Debug.Log($"Note {NoteIdx} length is {(float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds}, length in beats is {(float)(Note.LengthAs<BarBeatFractionTimeSpan>(Tempos).Bars+Note.LengthAs<BarBeatFractionTimeSpan>(Tempos).Beats)}");
+            MN.Setup(Note.NoteNumber - DiffBounds[0].Key, (float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds, (float)Note.LengthAs<MetricTimeSpan>(Tempos).TotalSeconds, (float)(Note.LengthAs<BarBeatFractionTimeSpan>(Tempos).Bars+Note.LengthAs<BarBeatFractionTimeSpan>(Tempos).Beats));
 
             Lanes[MN.Lane].Add(MN);
             SortedNotes.Add(MN);
