@@ -123,7 +123,7 @@ public class NotesManager : MonoSingleton<NotesManager>
         {
             bool IsLift = false;
             if(LiftIdx<TrackLifts.Count){
-                if((float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds == (float)TrackLifts[LiftIdx].TimeAs<MetricTimeSpan>(Tempos).TotalSeconds){
+                if((float)Note.TimeAs<MetricTimeSpan>(Tempos).TotalSeconds == (float)TrackLifts[LiftIdx].TimeAs<MetricTimeSpan>(Tempos).TotalSeconds && Note.NoteNumber - DiffBounds[0].Key == TrackLifts[LiftIdx].NoteNumber - DiffBounds[1].Key){
                     IsLift=true;
                     LiftIdx++;
                 }
