@@ -81,12 +81,10 @@ public class GameManager : MonoSingleton<GameManager>
             {
                 kb[ExpertKeys[i]].ReadValueFromEvent(eventPtr, out float K);
                 Smasher CorrespondingSmasher = ExpertSmashers[i];
-    
+
                 if (K > 0 && !CorrespondingSmasher.HeldLastFrame)
-                    CorrespondingSmasher.Smash(false);
-                if (K <= 0 && CorrespondingSmasher.HeldLastFrame)
-                    CorrespondingSmasher.Smash(true);
-                    
+                    CorrespondingSmasher.Smash();
+
                 CorrespondingSmasher.HeldLastFrame = K > 0;
                 CorrespondingSmasher.UpdateSmasherMaterial(K);
 
