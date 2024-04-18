@@ -15,14 +15,14 @@ public class ScrollingBackgroundEffect : MonoBehaviour
 
         if (transform is RectTransform rt)
         {
-            _mat.mainTextureScale = new Vector2(rt.sizeDelta.x / rt.sizeDelta.y, 100 / rt.sizeDelta.y);
+            _mat.mainTextureScale = new Vector2(rt.sizeDelta.x / 1024 * 3, rt.sizeDelta.y / 2048 * 3); //new Vector2(rt.sizeDelta.x / rt.sizeDelta.y, 100 / rt.sizeDelta.y);
             _img.material = _mat;
         }
     }
 
     private void Update()
     {
-        _img.materialForRendering.mainTextureOffset = new Vector2(-Time.time * 0.05f, Time.time * 0.05f);
+        _img.materialForRendering.mainTextureOffset = new Vector2(-Time.time * 0.025f, Time.time * 0.025f);
         _img.SetMaterialDirty();
         //transform.position += new Vector3(0.00001f, 0);
         //transform.position -= new Vector3(0.00001f, 0);
