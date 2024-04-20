@@ -15,7 +15,7 @@ public class ScrollingBackgroundEffect : MonoBehaviour
 
         if (transform is RectTransform rt)
         {
-            _mat.mainTextureScale = new Vector2(rt.sizeDelta.x / 1024 * 3, rt.sizeDelta.y / 2048 * 3); //new Vector2(rt.sizeDelta.x / rt.sizeDelta.y, 100 / rt.sizeDelta.y);
+            _mat.mainTextureScale = new Vector2(rt.sizeDelta.x / 1024 * 4, rt.sizeDelta.y / 2048 * 4); //new Vector2(rt.sizeDelta.x / rt.sizeDelta.y, 100 / rt.sizeDelta.y);
             _img.material = _mat;
         }
     }

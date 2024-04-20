@@ -1,0 +1,9 @@
+It's Encore-ing time.
+Definitely not ripping off a popular battle royale game!
+We worship NF and The Search. We pray to him every day.
+Now available: The Encore Battle Pass! Including 30 unique skins!
+Friday Night Funkin' Modding
+Do NOT drink the Among Us potion at 3 AM.
+What's better? Encore Raylib or Encore Unity?
+[object Object]
+NullReferenceException: "randomizedText" is null or undefined.
