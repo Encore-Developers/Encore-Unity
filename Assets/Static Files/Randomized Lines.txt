@@ -7,3 +7,4 @@ Do NOT drink the Among Us potion at 3 AM.
 What's better? Encore Raylib or Encore Unity?
 [object Object]
 NullReferenceException: "randomizedText" is null or undefined.
+If En, then only Core!
