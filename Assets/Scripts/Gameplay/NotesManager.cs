@@ -40,7 +40,7 @@ public class NotesManager : MonoSingleton<NotesManager>
     public Transform NotesParent, FinalScoreUI;
     public float MusicSyncDeltaTime = 0;
     public Material SmasherHit, SmasherDefault;
-    public float ScrollSpeed = 15f;
+    public float ScrollSpeed = 50f;
     public Dictionary<StemType, AudioSource> LoadedStems = new Dictionary<StemType, AudioSource>();
 
     bool PlayedFinishEnumerator = false;
