@@ -8,3 +8,8 @@ What's better? Encore Raylib or Encore Unity?
 [object Object]
 NullReferenceException: "randomizedText" is null or undefined.
 If En, then only Core!
+Encore better add the balls or else I'm gonna be sad
+#1 on the Cake By The Ocean leaderboard
+In loving memory of Zwarkledarg... gone too soon.
+Now comes with a calculator!
+Powered by Unreal Engine
