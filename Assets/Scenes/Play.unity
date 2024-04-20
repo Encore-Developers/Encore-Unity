@@ -464,7 +464,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 301458115}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -2591,7 +2591,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: DNCE - Cake By The Ocean
+  m_text: '#############'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c770e36c834839046a26702df142bcc9, type: 2}
   m_sharedMaterial: {fileID: 7295740464970550064, guid: c770e36c834839046a26702df142bcc9, type: 2}
