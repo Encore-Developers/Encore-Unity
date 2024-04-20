@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Melanchall.DryWetMidi.Core;
 using System.Linq;
 using Melanchall.DryWetMidi.Interaction;
+using DG.Tweening;
+using TMPro;
+using UnityEngine.UI;
 
 public enum StemType
 {
@@ -33,11 +36,14 @@ public class NotesManager : MonoSingleton<NotesManager>
 {
     public override bool DontDestroy() => false;
 
-    public Transform NotesParent;
+    public CanvasGroup FinalScoreUIGroup, PlayUIGroup;
+    public Transform NotesParent, FinalScoreUI;
     public float MusicSyncDeltaTime = 0;
     public Material SmasherHit, SmasherDefault;
     public float ScrollSpeed = 15f;
     public Dictionary<StemType, AudioSource> LoadedStems = new Dictionary<StemType, AudioSource>();
+
+    bool PlayedFinishEnumerator = false;
 
     public float CurrentTime
     {
@@ -60,7 +66,7 @@ public class NotesManager : MonoSingleton<NotesManager>
         {
             StemType StemT = Enum.Parse<StemType>(F.Name);
             string FileName = (string)F.GetValue(Config.StemFileNames);
-            if (FileName == null)
+            if (string.IsNullOrEmpty(FileName))
                 continue;
 
             print($"Got {FileName} for stem type {StemT}");
@@ -146,10 +152,54 @@ public class NotesManager : MonoSingleton<NotesManager>
         GameManager.Instance.CurrentGameStats.TotalNotes = SortedNotes.Count;
     }
 
+    IEnumerator FinishAnimation()
+    {
+        print("Playing finish animation!");
+        bool HasCover = GameManager.Instance.CurrentSongConfig.Cover != null;
+        Image CoverArt = FinalScoreUI.Find("Cover Art Mask").GetChild(0).GetComponent<Image>();
+
+        if (HasCover)
+            CoverArt.sprite = Sprite.Create(GameManager.Instance.CurrentSongConfig.Cover, new Rect(0, 0, GameManager.Instance.CurrentSongConfig.Cover.width, GameManager.Instance.CurrentSongConfig.Cover.height), new Vector2(0.5f, 0.5f));
+
+        yield return new WaitForSeconds(1);
+        PlayUIGroup.DOFade(0, 0.3f);
+        FinalScoreUIGroup.DOFade(1, 0.3f);
+
+        // hear me out - hardcoding the child names
+        TextMeshProUGUI Header = FinalScoreUI.Find("Header").GetComponent<TextMeshProUGUI>();
+        Transform Stars = FinalScoreUI.Find("Stars");
+        CanvasGroup CoverArtCanvasGroup = FinalScoreUI.Find("Cover Art Mask").GetChild(1).GetComponent<CanvasGroup>();
+
+        if (HasCover)
+            CoverArtCanvasGroup.DOFade(0, 0.5f);
+
+        Header.DOText($"{GameManager.Instance.CurrentSongConfig.Artist} - {GameManager.Instance.CurrentSongConfig.Title}", 0.5f);
+        yield return new WaitForSeconds(0.5f);
+
+        FinalScoreStarHelper[] StarHelpers = Stars.GetComponentsInChildren<FinalScoreStarHelper>();
+        for (int i = 0; i < StarHelpers.Length; i++)
+        {
+            FinalScoreStarHelper StarHelper = StarHelpers[i];
+            StartCoroutine(StarHelper.Appear());
+            yield return new WaitForSeconds(0.15f);
+        }
+    }
+
     private void Update()
     {
         if (_backingSource == null)
             return;
+
+        if (_backingSource.time >= _backingSource.clip.length)
+        {
+            if (!PlayedFinishEnumerator)
+            {
+                PlayedFinishEnumerator = true;
+                StartCoroutine(FinishAnimation());
+            }
+
+            return;
+        }
 
         NotesParent.position = new Vector3(0, 0, -_backingSource.time * ScrollSpeed + 2.35f); // the -2.35f is an offset
 

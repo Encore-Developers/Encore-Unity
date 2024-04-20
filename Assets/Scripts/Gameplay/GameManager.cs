@@ -118,6 +118,14 @@ public class GameManager : MonoSingleton<GameManager>
         CurrentSongConfig = JsonConvert.DeserializeObject<SongConfigTemplate>(File.ReadAllText(Path.Combine(Application.streamingAssetsPath, ConfigPathRelativeToStreamingAssets)));
         CurrentSongConfig.SongDirectory = Path.GetDirectoryName(Path.Combine(Application.streamingAssetsPath, ConfigPathRelativeToStreamingAssets));
         CurrentSongConfig.Chart = MidiFile.Read(Path.Combine(CurrentSongConfig.SongDirectory, CurrentSongConfig.ChartFileName));
+        
+        if (!string.IsNullOrEmpty(CurrentSongConfig.CoverImageFileName)) {
+            Texture2D Cover = new Texture2D(2, 2);
+            byte[] RawCoverFile = File.ReadAllBytes(Path.Combine(CurrentSongConfig.SongDirectory, CurrentSongConfig.CoverImageFileName));
+            
+            ImageConversion.LoadImage(Cover, RawCoverFile);
+            CurrentSongConfig.Cover = Cover;
+        }
 
         // LOAD SONG DATA
         NotesManager.Instance?.LoadStems(CurrentSongConfig);
